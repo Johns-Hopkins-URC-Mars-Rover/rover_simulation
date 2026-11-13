@@ -1,21 +1,26 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import Command
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
     package_name = 'rover_description'
-    urdf_name = 'simp_rover.urdf'
     entity_name = 'rover'
 
     package_share = get_package_share_directory(package_name)
-    urdf_file = os.path.join(package_share, 'urdf', urdf_name)
     world_file = os.path.join(package_share, 'world', 'park.world')
+    xacro_file = os.path.join(package_share, 'urdf', 'simp_rover.xacro')
+    config_path = os.path.join(package_share, 'config', 'rover_controller.yaml')
 
-    with open(urdf_file, 'r') as infp:
-        robot_description = infp.read()
+    robot_description_content = Command([
+        'xacro ', xacro_file,
+        ' config_path:=', config_path
+    ])
+
+    robot_description = {'robot_description': robot_description_content}
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -36,7 +41,7 @@ def generate_launch_description():
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description}],
+        parameters=[robot_description],
         output='screen'
     )
 

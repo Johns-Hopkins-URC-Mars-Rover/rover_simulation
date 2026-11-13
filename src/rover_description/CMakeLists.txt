@@ -23,4 +23,19 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+find_program(XACRO_EXECUTABLE xacro)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/urdf/simp_rover.urdf
+  COMMAND ${XACRO_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/urdf/simp_rover.xacro
+          config_path:=${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/config/rover_controller.yaml
+          > ${CMAKE_CURRENT_SOURCE_DIR}/urdf/simp_rover.urdf
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/urdf/simp_rover.xacro
+  COMMENT "Generating static simp_rover.urdf from simp_rover.xacro"
+)
+
+add_custom_target(generate_simp_rover_urdf ALL
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/urdf/simp_rover.urdf
+)
+
 ament_package()

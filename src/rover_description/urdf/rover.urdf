@@ -646,7 +646,7 @@
 
   <gazebo>
     <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-      <parameters>/home/georgexu/rover_t/src/rover_description/config/rover_controller.yaml</parameters>
+      <parameters>package://rover_description/config/rover_controller.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>
